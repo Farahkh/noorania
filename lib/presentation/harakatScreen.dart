@@ -1,4 +1,5 @@
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:noorania/domain/SoundDirectoryController.dart';
@@ -44,6 +45,9 @@ class _HarakatScreenState extends State<HarakatScreen> {
     {'letter': 'ي', 'sound': 'Ya'}
   ];
   var harakat = ['َ ', 'ُ ', 'ِ '];
+  FlareControls fathaflareControls = FlareControls();
+  FlareControls dammaflareControls = FlareControls();
+  FlareControls kasrahflareControls = FlareControls();
 
   List<bool> isSelected = List.generate(3, (_) => false);
   String animationName;
@@ -78,19 +82,19 @@ class _HarakatScreenState extends State<HarakatScreen> {
                 'assets/Fat7a.flr',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
-                animation: animationName,
+                controller: fathaflareControls,
               ),
               FlareActor(
                 'assets/Damma.flr',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
-                animation: animationName,
+                controller: dammaflareControls,
               ),
               FlareActor(
                 'assets/Kasrah.flr',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
-                animation: animationName,
+                controller: kasrahflareControls,
               ),
             ],
             onPressed: (int index) {
@@ -101,7 +105,17 @@ class _HarakatScreenState extends State<HarakatScreen> {
                   if (buttonIndex == index) {
                     isSelected[buttonIndex] = !isSelected[buttonIndex];
                     if (animationName == null) {
-                      animationName = 'jumping';
+                      switch (index) {
+                        case 0:
+                          fathaflareControls.play('jumping');
+                          break;
+                        case 1:
+                          dammaflareControls.play('scale');
+                          break;
+                        case 2:
+                          kasrahflareControls.play('sinking');
+                          break;
+                      }
                     } else {
                       animationName = null;
                     }
@@ -146,7 +160,7 @@ class _HarakatScreenState extends State<HarakatScreen> {
 
   InkWell addArabicLetterCards(int index) {
     return InkWell(
-        onTap: () => playLetter(letters[index]),
+        onTap: () => playCard(index),
         child: Container(
           height: 300,
           width: 300,
@@ -212,5 +226,22 @@ class _HarakatScreenState extends State<HarakatScreen> {
 //    player.play('$letterSound.mp3');
     print('letter $letterName is clicked');
 //    player.clear('$letterSound.mp3');
+  }
+
+  void playCard(int index) {
+    setState(() {
+      playLetter(letters[index]);
+      switch (isSelected.indexOf(true)) {
+        case 0:
+          fathaflareControls.play('talk');
+          break;
+        case 1:
+          dammaflareControls.play('talk');
+          break;
+        case 2:
+          kasrahflareControls.play('talk');
+          break;
+      }
+    });
   }
 }
